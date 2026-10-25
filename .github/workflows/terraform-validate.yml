@@ -64,3 +64,13 @@ jobs:
           severity: "HIGH,CRITICAL"
           exit-code: "1"
           cache: "false"
+
+  approval-demo:
+    name: Manual Approval Demo
+    runs-on: ubuntu-latest
+    needs: [validate, security-scan]
+    environment: production-approval
+
+    steps:
+      - name: Confirm approval
+        run: echo "Approval received. No infrastructure was deployed."
