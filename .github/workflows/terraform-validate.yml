@@ -37,7 +37,7 @@ jobs:
       - name: Initialize Terraform
         run: terraform init -backend=false -input=false
 
-      - name: Format check
+      - name: Check formatting
         run: terraform fmt -check -recursive
 
       - name: Validate configuration
@@ -45,3 +45,22 @@ jobs:
 
       - name: Plan
         run: terraform plan -input=false -no-color
+
+  security-scan:
+    name: Trivy IaC Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Scan Terraform configuration
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          version: "v0.76.1"
+          scan-type: "config"
+          scan-ref: "."
+          hide-progress: true
+          severity: "HIGH,CRITICAL"
+          exit-code: "1"
+          cache: "false"
