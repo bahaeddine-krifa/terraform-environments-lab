@@ -43,8 +43,15 @@ jobs:
       - name: Validate configuration
         run: terraform validate -no-color
 
-      - name: Plan
-        run: terraform plan -input=false -no-color
+      - name: Generate saved plan
+        run: terraform plan -input=false -no-color -out="${{ matrix.environment }}.tfplan"
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan-${{ matrix.environment }}
+          path: environments/${{ matrix.environment }}/${{ matrix.environment }}.tfplan
+          retention-days: 3
 
   security-scan:
     name: Trivy IaC Security Scan
